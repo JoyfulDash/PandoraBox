@@ -3,8 +3,7 @@ import hashlib
 import os
 import urllib.request
 
-WORDLIST_FILE = "10k-most-common.txt"
-WORDLIST_URL = "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10k-most-common.txt"
+wordlist = load_wordlist()
 
 def load_wordlist(filename=WORDLIST_FILE, fallback_url=WORDLIST_URL):
     """
