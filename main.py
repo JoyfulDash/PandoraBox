@@ -1,8 +1,11 @@
 import time
 import sys
+import hashlib
+import os
 from modules.encoders import base64_encode, base64_decode
 from modules.ciphers import caesar_cipher, reverse_text
 from modules.hashers import sha256_hash
+from modules.bruteforce import load_wordlist, brute_force_sha256  # << IMPORT HERE
 
 # === MATRIX STYLE SETTINGS ===
 GREEN = "\033[92m"
@@ -49,7 +52,8 @@ def menu():
 3. Caesar Cipher (+3)
 4. Reverse Text
 5. SHA256 Hash
-6. Exit
+6. Brute Force SHA256
+7. Exit
 """, delay=0.005)
 
 def processing_banner(operation_name):
@@ -64,9 +68,30 @@ def main():
         menu()
         choice = input(GREEN + "Choose an option: " + RESET).strip()
 
-        if choice == '6':
+        if choice == '7':
             typewriter("Sealing PandoraBox... For now... Goodbye, agent.\n", delay=0.02)
             break
+
+        if choice == '6':
+            target = input(GREEN + "Enter SHA256 hash to crack: " + RESET).strip()
+            try:
+                wordlist = load_wordlist("10k-most-common.txt")
+            except FileNotFoundError as e:
+                print(f"Error: {e}")
+                continue
+
+            typewriter(f"Attempting {len(wordlist)} passwords...\n", delay=0.01)
+            start = time.time()
+            found = brute_force_sha256(target, wordlist)
+            end = time.time()
+
+            if found:
+                fastprint(f"\nPassword found: {found}")
+            else:
+                fastprint("\nPassword not found in list.")
+
+            fastprint(f"Completed in {end - start:.2f} seconds\n")
+            continue
 
         text = input(GREEN + "Enter text: " + RESET)
 
@@ -82,7 +107,7 @@ def main():
             operation_name, function = operation_map[choice]
             processing_banner(operation_name)
             result = function(text)
-            fastprint("✦ Result:")
+            fastprint("Result:")
             print()
             typewriter(result, delay=0.002)
             print("\n" + "-" * 40 + "\n")
