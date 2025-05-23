@@ -64,9 +64,15 @@ def processing_banner(operation_name):
 
 def main():
     banner()
+    valid_choices = {'1', '2', '3', '4', '5', '6', '7'}
+
     while True:
         menu()
         choice = input(GREEN + "Choose an option: " + RESET).strip()
+
+        if choice not in valid_choices:
+            typewriter("Invalid choice. Try again.\n", delay=0.01)
+            continue
 
         if choice == '7':
             typewriter("Sealing PandoraBox... For now... Goodbye, agent.\n", delay=0.02)
@@ -103,16 +109,13 @@ def main():
             '5': ('SHA256 Hash', sha256_hash),
         }
 
-        if choice in operation_map:
-            operation_name, function = operation_map[choice]
-            processing_banner(operation_name)
-            result = function(text)
-            fastprint("Result:")
-            print()
-            typewriter(result, delay=0.002)
-            print("\n" + "-" * 40 + "\n")
-        else:
-            typewriter("Invalid choice. Try again.\n", delay=0.01)
+        operation_name, function = operation_map[choice]
+        processing_banner(operation_name)
+        result = function(text)
+        fastprint("Result:")
+        print()
+        typewriter(result, delay=0.002)
+        print("\n" + "-" * 40 + "\n")
 
 if __name__ == "__main__":
     main()
