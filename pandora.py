@@ -8,8 +8,6 @@ from modules.bruteforce import load_wordlist, brute_force_sha256, brute_force_md
 # === SETTINGS ===
 GREEN = "\033[92m"
 RESET = "\033[0m"
-WORDLIST_FILE = "10k-most-common.txt"
-WORDLIST_URL = "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10k-most-common.txt"
 
 def typewriter(text, delay=0.01):
     for char in text:
@@ -93,7 +91,7 @@ def main():
             target = input(GREEN + f"Enter {hash_type.upper()} hash to crack: " + RESET).strip()
 
             try:
-                wordlist = load_wordlist(WORDLIST_FILE, fallback_url=WORDLIST_URL)
+                wordlist = load_wordlist()
             except FileNotFoundError as e:
                 fastprint(f"Error: {e}")
                 continue

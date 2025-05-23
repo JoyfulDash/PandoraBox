@@ -1,20 +1,21 @@
-#!/usr/bin/env python3
-
 import sys
 import hashlib
 import os
 import urllib.request
 
-wordlist = load_wordlist()
+# Wordlist constants — only defined here once
+WORDLIST_FILE = "10k-most-common.txt"
+WORDLIST_URL = "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10k-most-common.txt"
 
 def load_wordlist(filename=WORDLIST_FILE, fallback_url=WORDLIST_URL):
     """
-    Load a wordlist from the given filename in the module directory.
-    If not found locally and fallback_url is provided, download it.
+    Load a wordlist from the given filename.
+    If not found locally and fallback_url is provided, it downloads it.
     """
     script_dir = os.path.dirname(os.path.abspath(__file__))
     filepath = os.path.join(script_dir, filename)
 
+    # Download if missing
     if not os.path.isfile(filepath):
         if fallback_url:
             try:
@@ -24,7 +25,9 @@ def load_wordlist(filename=WORDLIST_FILE, fallback_url=WORDLIST_URL):
             except Exception as e:
                 raise FileNotFoundError(f"Failed to download wordlist: {e}")
         else:
-            raise FileNotFoundError(f"Wordlist '{filename}' not found and no URL provided.")
+            raise FileNotFoundError(
+                f"Wordlist '{filename}' not found and no URL provided."
+            )
 
     with open(filepath, "r", encoding="utf-8") as f:
         return [line.strip() for line in f if line.strip()]
