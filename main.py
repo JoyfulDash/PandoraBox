@@ -5,7 +5,7 @@ import os
 from modules.encoders import base64_encode, base64_decode
 from modules.ciphers import caesar_cipher, reverse_text
 from modules.hashers import sha256_hash
-from modules.bruteforce import load_wordlist, brute_force_sha256  # << IMPORT HERE
+from modules.bruteforce import load_wordlist, brute_force_sha256, brute_force_md5  # << Added MD5 here
 
 # === MATRIX STYLE SETTINGS ===
 GREEN = "\033[92m"
@@ -53,7 +53,8 @@ def menu():
 4. Reverse Text
 5. SHA256 Hash
 6. Brute Force SHA256
-7. Exit
+7. Brute Force MD5
+8. Exit
 """, delay=0.005)
 
 def processing_banner(operation_name):
@@ -64,7 +65,7 @@ def processing_banner(operation_name):
 
 def main():
     banner()
-    valid_choices = {'1', '2', '3', '4', '5', '6', '7'}
+    valid_choices = {'1', '2', '3', '4', '5', '6', '7', '8'}
 
     while True:
         menu()
@@ -74,7 +75,7 @@ def main():
             typewriter("Invalid choice. Try again.\n", delay=0.01)
             continue
 
-        if choice == '7':
+        if choice == '8':
             typewriter("Sealing PandoraBox... For now... Goodbye, agent.\n", delay=0.02)
             break
 
@@ -89,6 +90,27 @@ def main():
             typewriter(f"Attempting {len(wordlist)} passwords...\n", delay=0.01)
             start = time.time()
             found = brute_force_sha256(target, wordlist)
+            end = time.time()
+
+            if found:
+                fastprint(f"\nPassword found: {found}")
+            else:
+                fastprint("\nPassword not found in list.")
+
+            fastprint(f"Completed in {end - start:.2f} seconds\n")
+            continue
+
+        elif choice == '7':
+            target = input(GREEN + "Enter MD5 hash to crack: " + RESET).strip()
+            try:
+                wordlist = load_wordlist("10k-most-common.txt")
+            except FileNotFoundError as e:
+                print(f"Error: {e}")
+                continue
+
+            typewriter(f"Attempting {len(wordlist)} passwords...\n", delay=0.01)
+            start = time.time()
+            found = brute_force_md5(target, wordlist)
             end = time.time()
 
             if found:
